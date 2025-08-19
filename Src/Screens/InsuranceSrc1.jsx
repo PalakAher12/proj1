@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useNavigation } from '@react-navigation/native'
 import Tooltip from 'react-native-walkthrough-tooltip'
 import FirestoreService from '../Services/firestoreService' // Adjust the import path as necessary
+import { testFirebaseConnection, runDiagnostics } from '../Services/debugTest';
 
 const firestoreService = new FirestoreService();
 
@@ -133,7 +134,8 @@ const InsuranceSrc1=({navigation, route})=>{
     
     if (!validateForm()) {
       console.log('Form validation failed with errors:', validationErrors);
-      alert('Please fill in all required fields');
+      const missingFields = Object.keys(validationErrors).join(', ');
+      alert(`Please fill in all required fields: ${missingFields}`);
       return;
     }
     
@@ -769,6 +771,18 @@ const InsuranceSrc1=({navigation, route})=>{
           </Card>
 
           <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={[styles.actionButton, { backgroundColor: '#ff6b6b', marginBottom: 10 }]}
+              onPress={async () => {
+                runDiagnostics();
+                const result = await testFirebaseConnection();
+                alert(result.success ? 'Firebase test passed!' : `Firebase test failed: ${result.error}`);
+              }}
+            >
+                <Icon name="bug-report" size={20} color="white" />
+                <Text style={[styles.buttonText, { color: 'white' }]}>Test Firebase</Text>
+            </TouchableOpacity>
+            
             <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => { 
