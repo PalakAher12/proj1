@@ -15,6 +15,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useForm, Controller, useController } from "react-hook-form";
 import FirestoreService, { USER_DATA_TYPES } from "../Services/firestoreSrevice";
 
+const firestoreService = new FirestoreService();
+
 const PersonalDetails = ({ navigation }) => {
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
   const [showBloodDropdown, setShowBloodDropdown] = useState(false);
@@ -61,7 +63,7 @@ const handleShowDatePicker = () => {
   useEffect(() => {
     (async () => {
       try {
-        const userData = await FirestoreService.getUserDataByType(
+        const userData = await firestoreService.getUserDataByType(
           USER_DATA_TYPES.PERSONAL
         );
         if (userData) {
@@ -77,10 +79,10 @@ const handleShowDatePicker = () => {
   const onSubmit = useCallback(
     async (data) => {
       try {
-        await FirestoreService.saveUserData(USER_DATA_TYPES.PERSONAL, data);
+        await firestoreService.saveUserData(USER_DATA_TYPES.PERSONAL, data);
         console.log("Personal details saved successfully");
         Keyboard.dismiss();
-        navigation.navigate("MainTab");
+        navigation.navigate("Maintab");
       } catch (error) {
         console.log("Error saving personal details:", error);
         navigation.navigate("Maintab");
