@@ -10,7 +10,9 @@ import {
 import React, { useState, useEffect } from 'react';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreSrevice';
+import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreService';
+
+const firestoreService = new FirestoreService();
 
 const MedicalReportPreview = ({ navigation }) => {
   const [medicalInfo, setMedicalInfo] = useState({});
@@ -43,7 +45,7 @@ const MedicalReportPreview = ({ navigation }) => {
       setLoading(true);
       setError(null);
 
-      const userData = await FirestoreService.getUserDataByType(USER_DATA_TYPES.MEDICAL);
+      const userData = await firestoreService.getUserDataByType(USER_DATA_TYPES.MEDICAL);
       
       // Check if this is first time (no data exists)
       const hasData = userData && Object.keys(userData).length > 0 && 
@@ -72,7 +74,7 @@ const MedicalReportPreview = ({ navigation }) => {
       setLoading(true);
       setError(null);
 
-      const userData = await FirestoreService.getUserDataByType(USER_DATA_TYPES.MEDICAL);
+      const userData = await firestoreService.getUserDataByType(USER_DATA_TYPES.MEDICAL);
       
       if (userData) {
         setMedicalInfo(userData);
@@ -92,7 +94,7 @@ const MedicalReportPreview = ({ navigation }) => {
 const handleBack = () => {
   navigation.reset({
     index: 0,
-    routes: [{ name: 'MainTab' }],
+    routes: [{ name: 'Maintab' }],
   });
 };
 

@@ -12,9 +12,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { db } from './firechifile/firebaseConfig';
-import { doc, setDoc } from 'firebase/firestore';
-import { getFirestore } from 'firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 
 
 const OtpVerification = () => {
@@ -64,12 +62,12 @@ const OtpVerification = () => {
           createdAt: new Date().toISOString(),
         };
 
-        await setDoc(doc(db, 'Siddhi', uid), userData);
+        await firestore().collection('Siddhi').doc(uid).set(userData);
         ToastAndroid.showWithGravity('🎉 Signup successful! 🎯', ToastAndroid.SHORT, ToastAndroid.CENTER);
         navigation.replace('Terms');
       } else {
         ToastAndroid.showWithGravity('✅ Login successful! 🚀', ToastAndroid.SHORT, ToastAndroid.CENTER);
-        navigation.replace('MainTab');
+        navigation.replace('Maintab');
       }
     } catch (error) {
       console.error('OTP Verification Error:', error);

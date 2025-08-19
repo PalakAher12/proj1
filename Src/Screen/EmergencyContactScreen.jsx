@@ -16,7 +16,9 @@ import {
 import { Divider, Avatar, Card, TextInput, FAB } from "react-native-paper";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller } from "react-hook-form";
-import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreSrevice';
+import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreService';
+
+const firestoreService = new FirestoreService();
 
 const EmergencyContact = ({ navigation }) => {
   const [modalVisible,setModalVisible]=useState(false);
@@ -46,7 +48,7 @@ const EmergencyContact = ({ navigation }) => {
 
   const loadData = async () => {
     try {
-      const data = await FirestoreService.getEmergencyContacts();
+      const data = await firestoreService.getEmergencyContacts();
       setContacts(data);
     } catch (error) {
       console.log('Error loading data:', error);
@@ -80,11 +82,11 @@ const EmergencyContact = ({ navigation }) => {
           id: selectedContact.id,
           createdAt: selectedContact.createdAt 
         };
-        savedContact = await FirestoreService.saveEmergencyContact(contactWithId);
+        savedContact = await firestoreService.saveEmergencyContact(contactWithId);
         setIsEditing(false);
         setSelectedContact(null);
       } else {
-        savedContact = await FirestoreService.saveEmergencyContact(data);
+        savedContact = await firestoreService.saveEmergencyContact(data);
       }
       
       console.log('Contact saved successfully:', encodeURIComponent(savedContact?.id || 'unknown'));
@@ -406,7 +408,7 @@ const EmergencyContact = ({ navigation }) => {
                           style={styles.deleteButton} 
                           onPress={async () => {
                             try {
-                              const success = await FirestoreService.deleteEmergencyContact(selectedContact.id);
+                              const success = await firestoreService.deleteEmergencyContact(selectedContact.id);
                               if (success) {
                                 await loadData();
                                 setDetailModalVisible(false);

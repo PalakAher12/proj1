@@ -12,7 +12,9 @@ import { Divider } from "react-native-paper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Styling from "../Screens/Styling";
 import { useForm, Controller } from "react-hook-form";
-import FirestoreService from '../Services/firestoreSrevice';
+import FirestoreService from '../Services/firestoreService';
+
+const firestoreService = new FirestoreService();
 
 
 const StartInsuranceFile = ({ navigation }) => {
@@ -37,7 +39,7 @@ const StartInsuranceFile = ({ navigation }) => {
 
   const initializeUser = async () => {
     try {
-      const id = await FirestoreService.getUserId();
+      const id = await firestoreService.getUserId();
       setUserId(id);
       loadData(id);
     } catch (error) {
@@ -48,7 +50,7 @@ const StartInsuranceFile = ({ navigation }) => {
   const loadData = async (userIdParam = userId) => {
     if (!userIdParam) return;
     try {
-      const userData = await FirestoreService.getUserDataByType(userIdParam, 'insuranceInfo');
+      const userData = await firestoreService.getUserDataByType('insuranceInfo');
       if (userData) {
         const { id, userId: uid, dataType, createdAt, updatedAt, ...formData } = userData;
         reset(formData);
@@ -92,7 +94,7 @@ const StartInsuranceFile = ({ navigation }) => {
     try {
       await AsyncStorage.setItem('StartInsuranceFile', JSON.stringify(data));
       
-      const docId = await FirestoreService.saveUserData(userId, 'insuranceInfo', data);
+      const docId = await firestoreService.saveUserData('insuranceInfo', data);
       
       console.log('Insurance info saved to Firestore with ID:', docId);
       Keyboard.dismiss();
@@ -108,7 +110,7 @@ const StartInsuranceFile = ({ navigation }) => {
         const currentValues = control._formValues;
         await AsyncStorage.setItem('StartInsuranceFile', JSON.stringify(currentValues));
         
-        const docId = await FirestoreService.saveUserData(userId, 'insuranceInfo', currentValues);
+        const docId = await firestoreService.saveUserData('insuranceInfo', currentValues);
         
         console.log('Insurance info (previous) saved to Firestore with ID:', docId);
         Keyboard.dismiss();
@@ -124,7 +126,7 @@ const StartInsuranceFile = ({ navigation }) => {
         const currentValues = control._formValues;
         await AsyncStorage.setItem('StartInsuranceFile', JSON.stringify(currentValues));
         
-        const docId = await FirestoreService.saveUserData(userId, 'insuranceInfo', currentValues);
+        const docId = await firestoreService.saveUserData('insuranceInfo', currentValues);
         
         console.log('Insurance info (skipped) saved to Firestore with ID:', docId);
         Keyboard.dismiss();

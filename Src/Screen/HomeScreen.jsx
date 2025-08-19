@@ -7,9 +7,8 @@ import HomeStyle from "../../styles/HomeStyle"
 import ActivityCard from "./ActivityCard"
 import Dailycheckout from "../compoenents/Dailycheckout"
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { doc, getDoc } from 'firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { db } from '../SiddhiScreens/firechifile/firebaseConfig'; // your firebase config file
+import firestore from '@react-native-firebase/firestore';
 import FlipCardBanner from '../Components/FlipCardBanner'
 const { width } = Dimensions.get('window');
 
@@ -62,8 +61,8 @@ useEffect(() => {
     if (!user?.uid) return;
 
     try {
-      const docRef = doc(db, 'Siddhi', user.uid);
-      const docSnap = await getDoc(docRef);
+      const docRef = firestore().collection('Siddhi').doc(user.uid);
+      const docSnap = await docRef.get();
 
       if (docSnap.exists()) {
         const userData = docSnap.data();

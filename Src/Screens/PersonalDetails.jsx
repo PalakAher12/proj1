@@ -13,7 +13,7 @@ import { TextInput } from "react-native-paper";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useForm, Controller, useController } from "react-hook-form";
-import FirestoreService, { USER_DATA_TYPES } from "../Services/firestoreSrevice";
+import FirestoreService, { USER_DATA_TYPES } from "../Services/firestoreService";
 
 const firestoreService = new FirestoreService();
 

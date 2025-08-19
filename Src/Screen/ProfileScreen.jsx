@@ -18,9 +18,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import LogoutModal from '../Components/LogoutModal';
-import { getDoc, doc, setDoc, deleteField, updateDoc } from 'firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { db } from '../SiddhiScreens/firechifile/firebaseConfig';
+import firestore from '@react-native-firebase/firestore';
 
 const ProfileScreen = ({ navigation }) => {
   const [isLogoutVisible, setLogoutVisible] = useState(false);
@@ -66,7 +65,7 @@ const ProfileScreen = ({ navigation }) => {
   //saving pfp to firestore
   const saveProfileImageToFirestore = async (base64Image) => {
     try {
-      await setDoc(doc(db, "Siddhi", userId), {
+      await firestore().collection("Siddhi").doc(userId).set({
         profileImageBase64: base64Image
       }, { merge: true });
       showWarning("⚠️ Profile image updated ");
@@ -78,8 +77,8 @@ const ProfileScreen = ({ navigation }) => {
   // fetcching pfp to firestore
   const fetchProfileFromFirestore = async () => {
     try {
-      const docRef = doc(db, "Siddhi", userId);
-      const docSnap = await getDoc(docRef);
+      const docRef = firestore().collection("Siddhi").doc(userId);
+      const docSnap = await docRef.get();
 
       if (docSnap.exists()) {
         const data = docSnap.data();
@@ -99,8 +98,8 @@ const ProfileScreen = ({ navigation }) => {
   // removing pfp from firestore
   const removeProfileImage = async (userId) => {
     try {
-      await updateDoc(doc(db, "Siddhi", userId), {
-        profileImageBase64: deleteField()
+      await firestore().collection("Siddhi").doc(userId).update({
+        profileImageBase64: firestore.FieldValue.delete()
       });
 
       setProfileImage(""); // instantly remove from UI
@@ -127,8 +126,8 @@ const ProfileScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        const docRef = doc(db, 'Siddhi', userId);
-        const docSnap = await getDoc(docRef);
+        const docRef = firestore().collection('Siddhi').doc(userId);
+        const docSnap = await docRef.get();
 
         if (docSnap.exists()) {
           const userData = docSnap.data();
@@ -211,8 +210,7 @@ const ProfileScreen = ({ navigation }) => {
                 try {
                   setIsEditingName(false);
                   if (userId && fullName.trim() !== '') {
-                    await setDoc(
-                      doc(db, 'Siddhi', userId),
+                    await firestore().collection('Siddhi').doc(userId).set(
                       { fullName: fullName.trim() },
                       { merge: true }
                     );

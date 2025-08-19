@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
   Share,
 } from 'react-native';
-import { db } from '../SiddhiScreens/firechifile/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Feather from "react-native-vector-icons/Feather";
 import QRCode from 'react-native-qrcode-svg';
@@ -24,8 +23,8 @@ const QRScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const docRef = doc(db, 'Siddhi', uid);
-        const docSnap = await getDoc(docRef);
+        const docRef = firestore().collection('Siddhi').doc(uid);
+        const docSnap = await docRef.get();
 
         if (docSnap.exists()) {
           const data = docSnap.data();

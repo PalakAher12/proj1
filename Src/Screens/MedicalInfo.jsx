@@ -13,7 +13,9 @@ import {
 import { Divider, Avatar, Card, TextInput, Button } from "react-native-paper";
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreSrevice';
+import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreService';
+
+const firestoreService = new FirestoreService();
 
 const MedicalInfo = ({ navigation, route }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,7 +40,7 @@ const MedicalInfo = ({ navigation, route }) => {
 
   const loadExistingData = useCallback(async () => {
     try {
-      const userData = await FirestoreService.getUserDataByType(USER_DATA_TYPES.MEDICAL);
+      const userData = await firestoreService.getUserDataByType(USER_DATA_TYPES.MEDICAL);
       if (userData) {
         setFormState(userData);
         console.log('Loaded existing medical data');
@@ -105,7 +107,7 @@ const MedicalInfo = ({ navigation, route }) => {
     }
     
     try {
-      await FirestoreService.saveUserData(USER_DATA_TYPES.MEDICAL, formState);
+      await firestoreService.saveUserData(USER_DATA_TYPES.MEDICAL, formState);
       setModalVisible(true);
       setTimeout(() => {
         setModalVisible(false);

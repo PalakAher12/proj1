@@ -15,7 +15,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 
-import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreSrevice';
+import FirestoreService, { USER_DATA_TYPES } from '../Services/firestoreService';
+
+const firestoreService = new FirestoreService();
 
 const MultiplePolicy = () => {
   const navigation=useNavigation();
@@ -29,7 +31,7 @@ const MultiplePolicy = () => {
   const loadPolicies = React.useCallback(async () => {
     try {
       setIsLoading(true);
-      const policiesData = await FirestoreService.getInsurancePolicies();
+      const policiesData = await firestoreService.getInsurancePolicies();
       const formattedPolicies = policiesData.map((data) => ({
         id: data.id,
         name: data.policyHolderName || data.companyName || 'Policy Holder',
@@ -77,13 +79,13 @@ const MultiplePolicy = () => {
   }, []);
 
   const handleGoBack = React.useCallback(() => {
-    navigation.navigate("MainTab");
+    navigation.navigate("Maintab");
   }, [navigation]);
 
   const handleDeletePolicy = React.useCallback(async () => {
     if (selectedPolicy) {
       try {
-        await FirestoreService.deleteInsurancePolicy(selectedPolicy.id);
+        await firestoreService.deleteInsurancePolicy(selectedPolicy.id);
         await loadPolicies();
         console.log('Policy deleted successfully');
       } catch (error) {

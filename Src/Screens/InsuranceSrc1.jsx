@@ -4,7 +4,9 @@ import { Card, Divider, Avatar, TextInput } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useNavigation } from '@react-navigation/native'
 import Tooltip from 'react-native-walkthrough-tooltip'
-import FirestoreService from '../Services/firestoreSrevice' // Adjust the import path as necessary
+import FirestoreService from '../Services/firestoreService' // Adjust the import path as necessary
+
+const firestoreService = new FirestoreService();
 
 const InsuranceSrc1=({navigation, route})=>{
   const [userId, setUserId] = useState(null);
@@ -30,7 +32,7 @@ const InsuranceSrc1=({navigation, route})=>{
 
   const initializeUser = React.useCallback(async () => {
     try {
-      const id = await FirestoreService.getUserId();
+      const id = await firestoreService.getUserId();
       setUserId(id);
     } catch (error) {
       console.log('Error initializing user:', error);
@@ -132,7 +134,7 @@ const InsuranceSrc1=({navigation, route})=>{
     }
     
     try {
-      const savedPolicy = await FirestoreService.saveInsurancePolicy(data);
+      const savedPolicy = await firestoreService.saveInsurancePolicy(data);
       setModalVisible(true);
       setTimeout(() => {
         navigation.navigate('InsurancePreview', {

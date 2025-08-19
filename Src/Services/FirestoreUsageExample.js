@@ -1,5 +1,5 @@
 // FirestoreService Usage Examples
-import firestoreService, { USER_DATA_TYPES } from './firestoreSrevice';
+import firestoreService, { USER_DATA_TYPES } from './firestoreService';
 
 // Example usage of the updated FirestoreService
 

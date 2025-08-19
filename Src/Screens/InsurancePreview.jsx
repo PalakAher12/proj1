@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, Refres
 import { Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FirestoreService from '../Services/firestoreSrevice'; // Adjust the import path as necessary
+import FirestoreService from '../Services/firestoreService'; // Adjust the import path as necessary
+
+const firestoreService = new FirestoreService();
 
 const InsurancePreview = ({ navigation, route }) => {
   const [userId, setUserId] = useState(null);
@@ -13,7 +15,7 @@ const InsurancePreview = ({ navigation, route }) => {
   
   const initializeAndLoadData = useCallback(async () => {
     try {
-      const id = await FirestoreService.getUserId();
+      const id = await firestoreService.getUserId();
       setUserId(id);
       await loadInsuranceData(id);
     } catch (error) {

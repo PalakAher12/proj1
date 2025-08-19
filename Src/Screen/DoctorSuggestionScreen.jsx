@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollVi
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import LottieView from 'lottie-react-native';
-import { db } from "../SiddhiScreens/firechifile/firebaseConfig";
-import {getDoc, doc, setDoc } from 'firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 
 const DoctorSuggestionScreen = ({ navigation }) => {
@@ -80,8 +79,8 @@ const DoctorSuggestionScreen = ({ navigation }) => {
     const fetchUserData = async () => {
       const userId = user.uid;
       try {
-        const docRef = doc(db, 'Siddhi', userId);
-        const docSnap = await getDoc(docRef);
+        const docRef = firestore().collection('Siddhi').doc(userId);
+        const docSnap = await docRef.get();
 
         if (docSnap.exists()) {
           const userData = docSnap.data();

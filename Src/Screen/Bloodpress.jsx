@@ -90,7 +90,7 @@ export default function BloodPressureScreen({ navigation }) {
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: '#E53935' }]}
-          onPress={() => navigation.navigate('MainTab')}
+          onPress={() => navigation.navigate('Maintab')}
         >
           <Text style={[styles.buttonText, { color: '#fff' }]}>Cancel</Text>
         </TouchableOpacity>
