@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "678464281008",
+    "project_id": "internpro-e969e",
+    "storage_bucket": "internpro-e969e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678464281008:android:4efaa1b11e32bf85b39e75",
+        "android_client_info": {
+          "package_name": "com.internpro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfoPwBr2WbWXZlJupFoH0gJgk75JPSGEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

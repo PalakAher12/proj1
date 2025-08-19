@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>User Health Card</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f8fb;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    /* Header Section */
+    .header {
+      background: #4a90e2;
+      color: white;
+      padding: 40px 20px 70px 20px;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      position: relative;
+    }
+
+    .profile-pic {
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid white;
+      margin-top: 50px;
+      background: #fff;
+    }
+
+    .user-name {
+      font-size: 35px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .user-location {
+      font-size: 21px;
+      opacity: 0.9;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+      background: #e9f1fb;
+      border-radius: 40px;
+      padding: 10px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .tab {
+      padding: 18px 45px;
+      /* Bigger size */
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 700;
+      /* bolder font */
+      font-size: 25px;
+      /* larger text */
+      color: #4a90e2;
+      transition: background 0.3s, transform 0.2s ease;
+    }
+
+    .tab:hover {
+      transform: scale(1.08);
+      /* more visible zoom */
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .tab.active {
+      background: white;
+      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Card Styles */
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      padding: 25px;
+      margin: 30px 40px 30px 40px;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 25px;
+      font-weight: bold;
+      color: #4a90e2;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Fields Layout */
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      /* Single column for mobile */
+      gap: 15px;
+      margin: 0 20px;
+      /* Left & Right margin for the whole grid */
+    }
+
+    /* Each Field */
+    .field {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 15px 20px;
+      background: #f9f9f9;
+      margin: 13px 0;
+    }
+
+    /* Field Label */
+    .field-label {
+      font-weight: bold;
+      font-size: 27px;
+      color: #333;
+      flex: 0 0 auto;
+      /* Keep label size fixed */
+      text-align: left;
+    }
+
+    /* Field Value */
+    .field-value {
+      font-weight: bold;
+      /* You said you want all bold */
+      font-size: 25px;
+      color: #555;
+      text-align: left;
+      flex: 1;
+      /* Take remaining space */
+      margin-left: 10px;
+      /* Gap between label & value */
+      word-break: break-word;
+      /* Wrap if long text */
+    }
+
+
+    /* Mobile Styling */
+    @media (max-width: 600px) {
+      .field {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .field-value {
+        text-align: left;
+        margin-top: 5px;
+      }
+    }
+  </style>
+
+
+</head>
+
+<body>
+
+  <div class="header">
+    <img id="headerProfilePic" src="https://via.placeholder.com/90" class="profile-pic">
+    <div class="user-name" id="headerName">Loading...</div>
+    <div class="user-location" id="headerLocation">Fetching location...</div>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('personal')">Personal</div>
+      <div class="tab" onclick="showTab('Insurance')">Insurance</div>
+    </div>
+  </div>
+
+  <div id="personalTab">
+    <div class="card" id="personalInfoCard"></div>
+    <div class="card" id="medicalInfoCard"></div>
+    <div class="card" id="emergencyContactsCard"></div>
+  </div>
+
+  <div id="InsuranceTab" style="display:none;">
+    <div class="card" id="insuranceCard"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDKwPZstPGtVuL7qbWKK07LW1KDLAqDQgA",
+      authDomain: "internpro-e969e.firebaseapp.com",
+      projectId: "internpro-e969e",
+      storageBucket: "internpro-e969e.appspot.com",
+      messagingSenderId: "678464281008",
+      appId: "1:678464281008:web:97cee81e6d2bd54cb39e75",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const USER_DOC_ID = params.get("uid");
+
+    if (USER_DOC_ID) {
+      listenForData(USER_DOC_ID);
+    }
+
+    function listenForData(USER_DOC_ID) {
+      const docRef = doc(db, "Siddhi", USER_DOC_ID);
+      onSnapshot(docRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+
+          // Header
+          document.getElementById("headerProfilePic").src = data.profileImageBase64 || "https://via.placeholder.com/90";
+          document.getElementById("headerName").textContent = data.personalDetails.fullName || "-";
+          document.getElementById("headerLocation").textContent = data.personalDetails.address || "-";
+
+          // Personal Info
+          document.getElementById("personalInfoCard").innerHTML = `
+            <div class="section-title">👤 Personal Information</div>
+            ${fieldHTML("Birth Date", data.personalDetails.birthDate)}
+            ${fieldHTML("Gender", data.personalDetails.gender)}
+            ${fieldHTML("Blood Group", data.personalDetails.bloodGrp)}
+            ${fieldHTML("Height", data.personalDetails.height)}
+            ${fieldHTML("Weight", data.personalDetails.weight)}
+            ${fieldHTML("Phone", data.phone)}
+            ${fieldHTML("Email", data.email)}
+          `;
+
+          // Medical Info
+          document.getElementById("medicalInfoCard").innerHTML = `
+            <div class="section-title">🩺 Medical Information</div>
+            ${fieldHTML("Allergies", data.medicalInfo?.allergies)}
+            ${fieldHTML("Chronic Illnesses", data.medicalInfo?.chronicIllnesses)}
+            ${fieldHTML("Family History", data.medicalInfo?.familyMedicalHistory)}
+            ${fieldHTML("Medical Conditions", data.medicalInfo?.medicalConditions)}
+            ${fieldHTML("Past Surgery", data.medicalInfo?.pastSurgery)}
+          `;
+
+          // Emergency Contacts
+          document.getElementById("emergencyContactsCard").innerHTML = `
+  <div class="section-title">🚨 Emergency Contacts</div>
+  ${Array.isArray(data.emergencyContact) && data.emergencyContact.length > 0
+              ? data.emergencyContact.map((c, index) =>
+                `<div style="margin-top:20px;">
+          <h3 style="color:#4a90e2; margin-bottom:10px;">Emergency Contact #${index + 1}</h3>
+          ${fieldHTML("Name", c.emergencyName)}
+          ${fieldHTML("Phone", c.emergencyPhone)}
+          ${fieldHTML("Relation", c.emergencyRelation)}
+        </div>`
+              ).join("")
+              : `<p>No emergency contacts available.</p>`}
+`;
+
+
+          // Insurance Policies
+          document.getElementById("insuranceCard").innerHTML = `
+  <div class="section-title">📄 Insurance Policies</div>
+  ${Array.isArray(data.insurancePolicies) && data.insurancePolicies.length > 0
+              ? data.insurancePolicies.map((p, index) =>
+                `<div style="margin-top:25px;">
+          <h3 style="color:#4a90e2; margin-bottom:10px;">Policy #${index + 1}</h3>
+          ${fieldHTML("Company Name", p.companyName)}
+          ${fieldHTML("Service Number", p.serviceNumber)}
+          ${fieldHTML("Policy Number", p.policyNumber)}
+          ${fieldHTML("Policy Type", p.policyType)}
+          ${fieldHTML("Insurance Type", p.insuranceType)}
+          ${fieldHTML("Start Date", p.policyStartDate)}
+          ${fieldHTML("End Date", p.policyEndDate)}
+          ${fieldHTML("Sum Insured", p.sumInsured)}
+          ${fieldHTML("Nominee Name", p.nomineeName)}
+          ${fieldHTML("Nominee Phone", p.nomineePhn)}
+          ${fieldHTML("Nominee Relation", p.nomineeRelation)}
+          ${fieldHTML("Policy Holder Name", p.policyHolderName)}
+          ${fieldHTML("Aadhar Card No", p.adharcardNo)}
+          ${fieldHTML("PAN Card No", p.pancardNo)}
+          ${fieldHTML("Claim Amount", p.claimAmount)}
+          ${fieldHTML("Claim Help Phone", p.claimHelpPhn)}
+          ${fieldHTML("Claim Link", p.claimLink)}
+          ${fieldHTML("Email of Company", p.emailOfCompany)}
+        </div>`
+              ).join("")
+              : `<p>No insurance policies available.</p>`}
+`;
+
+
+        }
+      });
+    }
+
+    function fieldHTML(label, value) {
+      return `<div class="field"><span class="field-label">${label}:</span><div class="field-value">${value || "-"}</div></div>`;
+    }
+
+    // Tab Switch
+    function showTab(tab) {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll("#personalTab, #InsuranceTab").forEach(div => div.style.display = "none");
+
+      if (tab === "personal") {
+        document.querySelector(".tab:nth-child(1)").classList.add("active");
+        document.getElementById("personalTab").style.display = "block";
+      } else {
+        document.querySelector(".tab:nth-child(2)").classList.add("active");
+        document.getElementById("InsuranceTab").style.display = "block";
+      }
+    }
+    window.showTab = showTab;
+  </script>
+
+</body>
+
+</html>
