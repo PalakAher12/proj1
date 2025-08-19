@@ -70,10 +70,13 @@ const EmergencyContact = ({ navigation }) => {
       };
       console.log('Attempting to save contact:', sanitizedData);
       
-      if (!data.emergencyName || !data.emergencyPhone) {
-        console.error('Missing required fields');
+      if (!data.emergencyName || !data.emergencyPhone || !data.emergencyRelation) {
+        console.error('Missing required fields:', data);
+        alert('Please fill in all required fields: Name, Phone, and Relation');
         return;
       }
+      
+      console.log('Emergency contact validation passed, attempting to save...');
       
       let savedContact;
       if (isEditing && selectedContact) {
@@ -96,6 +99,7 @@ const EmergencyContact = ({ navigation }) => {
       Keyboard.dismiss();
     } catch (error) {
       console.error('Error in handleSaveContact:', error.message || error);
+      alert(`Error saving contact: ${error.message || error}`);
       // Don't close modal on error so user can retry
     }
   }, [isEditing, selectedContact, loadData, reset]);

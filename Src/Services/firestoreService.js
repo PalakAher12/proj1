@@ -38,8 +38,10 @@ class FirestoreService {
     const firebaseUser = auth().currentUser;
 
     if (!firebaseUser) {
+      console.error('❌ Authentication Error: No user signed in');
       throw new Error('No Firebase user authenticated. Please sign in first.');
     }
+    console.log('✅ User authenticated:', firebaseUser.uid);
     return firebaseUser.uid;
   }
 
@@ -50,6 +52,7 @@ class FirestoreService {
   // ---------- SAVE USER DATA ----------
   async saveUserData(dataType, data) {
     try {
+      console.log(`📝 Attempting to save ${dataType}:`, data);
       const userId = await this.getUserId();
       const userRef = firestore().collection('Siddhi').doc(userId);
 
@@ -69,6 +72,12 @@ class FirestoreService {
       return true;
     } catch (error) {
       console.error(`❌ Error saving ${dataType}:`, error);
+      if (error.code) {
+        console.error(`Firebase Error Code: ${error.code}`);
+      }
+      if (error.message) {
+        console.error(`Firebase Error Message: ${error.message}`);
+      }
       throw error;
     }
   }

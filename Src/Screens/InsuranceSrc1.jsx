@@ -128,13 +128,21 @@ const InsuranceSrc1=({navigation, route})=>{
   };
 
   const onSubmit = React.useCallback(async (data) => {
+    console.log('Form submission started with data:', data);
+    console.log('Current formState:', formState);
+    
     if (!validateForm()) {
-     
+      console.log('Form validation failed with errors:', validationErrors);
+      alert('Please fill in all required fields');
       return;
     }
     
+    console.log('Form validation passed, attempting to save to Firebase...');
+    
     try {
-      const savedPolicy = await firestoreService.saveInsurancePolicy(data);
+      // Use formState instead of data parameter since that's what's being passed
+      const savedPolicy = await firestoreService.saveInsurancePolicy(formState);
+      console.log('Policy saved successfully:', savedPolicy);
       setModalVisible(true);
       setTimeout(() => {
         navigation.navigate('InsurancePreview', {
@@ -143,9 +151,10 @@ const InsuranceSrc1=({navigation, route})=>{
         });
       }, 2000);
     } catch (error) {
-      console.log('Error saving insurance policy:', error);
+      console.error('Error saving insurance policy:', error);
+      alert(`Error saving policy: ${error.message || error}`);
     }
-  }, [navigation, validateForm]);
+  }, [navigation, validateForm, formState, validationErrors]);
     
   const [modalVisible, setModalVisible] = useState(false);
   
